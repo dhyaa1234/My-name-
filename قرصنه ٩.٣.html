@@ -1,0 +1,2409 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NHHS PRO - Neon Holographic Hacking System</title>
+    <style>
+        :root {
+            --neon-blue: #00f3ff;
+            --neon-purple: #bd00ff;
+            --neon-pink: #ff00f7;
+            --neon-green: #00ff9d;
+            --neon-yellow: #fff700;
+            --neon-red: #ff0033;
+            --dark-layer: rgba(0, 5, 15, 0.9);
+            --darker-layer: rgba(0, 2, 10, 0.95);
+            --hacker-font: 'Rajdhani', 'Courier New', monospace;
+        }
+
+        @font-face {
+            font-family: 'Rajdhani';
+            src: url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;700&display=swap');
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: #000;
+            color: var(--neon-blue);
+            font-family: var(--hacker-font);
+            overflow: hidden;
+            height: 100vh;
+            perspective: 1000px;
+        }
+
+        /* تأثيرات الهولوجرام */
+        .hologram-effect {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background:
+                linear-gradient(135deg, rgba(0, 243, 255, 0.05) 0%, transparent 50%),
+                linear-gradient(-135deg, rgba(189, 0, 255, 0.05) 0%, transparent 50%);
+            background-size: 200% 200%;
+            animation: hologramGradient 15s infinite alternate;
+            pointer-events: none;
+            z-index: 900;
+        }
+
+        @keyframes hologramGradient {
+            0% { background-position: 0% 0%; }
+            100% { background-position: 100% 100%; }
+        }
+
+        .grid-lines {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image:
+                linear-gradient(rgba(0, 243, 255, 0.1) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 243, 255, 0.1) 1px, transparent 1px);
+            background-size: 50px 50px;
+            pointer-events: none;
+            z-index: 901;
+        }
+
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 902;
+        }
+
+        .particle {
+            position: absolute;
+            background-color: var(--neon-blue);
+            border-radius: 50%;
+            opacity: 0.3;
+            animation: floatParticle linear infinite;
+        }
+
+        @keyframes floatParticle {
+            0% { transform: translateY(0) translateX(0); opacity: 0; }
+            10% { opacity: 0.3; }
+            90% { opacity: 0.3; }
+            100% { transform: translateY(-100vh) translateX(20px); opacity: 0; }
+        }
+
+        /* الهيكل الرئيسي ثلاثي الأبعاد */
+        .main-container {
+            display: grid;
+            grid-template-columns: 280px 1fr 300px;
+            grid-template-rows: 80px 1fr 100px;
+            height: 100vh;
+            gap: 5px;
+            padding: 10px;
+            transform-style: preserve-3d;
+        }
+
+        /* شريط العنوان الهولوجرافي */
+        .header {
+            grid-column: 1 / 4;
+            grid-row: 1;
+            background-color: var(--dark-layer);
+            border: 1px solid var(--neon-blue);
+            border-radius: 3px;
+            box-shadow: 0 0 20px rgba(0, 243, 255, 0.3);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 25px;
+            transform: translateZ(20px);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(
+                to bottom right,
+                transparent 45%,
+                rgba(0, 243, 255, 0.1) 50%,
+                transparent 55%
+            );
+            animation: shine 5s infinite;
+        }
+
+        @keyframes shine {
+            0% { transform: rotate(0deg) translate(-30%, -30%); }
+            100% { transform: rotate(360deg) translate(-30%, -30%); }
+        }
+
+        .logo {
+            font-size: 1.8em;
+            font-weight: bold;
+            background: linear-gradient(90deg, var(--neon-blue), var(--neon-purple));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 0 0 10px rgba(0, 243, 255, 0.5);
+            letter-spacing: 2px;
+        }
+
+        .logo-pro {
+            font-size: 0.6em;
+            vertical-align: super;
+            color: var(--neon-pink);
+            text-shadow: 0 0 5px var(--neon-pink);
+        }
+
+        .system-status {
+            display: flex;
+            gap: 25px;
+        }
+
+        .status-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .status-item:hover {
+            text-shadow: 0 0 10px var(--neon-blue);
+        }
+
+        .status-indicator {
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background-color: var(--neon-blue);
+            box-shadow: 0 0 10px var(--neon-blue);
+            position: relative;
+        }
+
+        .status-indicator::after {
+            content: '';
+            position: absolute;
+            top: -3px;
+            left: -3px;
+            right: -3px;
+            bottom: -3px;
+            border-radius: 50%;
+            border: 1px solid var(--neon-blue);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 1; }
+            100% { transform: scale(1.5); opacity: 0; }
+        }
+
+        .status-indicator.critical {
+            background-color: var(--neon-pink);
+            box-shadow: 0 0 10px var(--neon-pink);
+            animation: blink 0.5s infinite;
+        }
+
+        .status-indicator.critical::after {
+            border-color: var(--neon-pink);
+        }
+
+        .status-indicator.warning {
+            background-color: var(--neon-yellow);
+            box-shadow: 0 0 10px var(--neon-yellow);
+        }
+
+        .status-indicator.warning::after {
+            border-color: var(--neon-yellow);
+        }
+
+        /* الشريط الجانبي الأيسر - قائمة الأدوات */
+        .sidebar-left {
+            grid-column: 1;
+            grid-row: 2;
+            background-color: var(--dark-layer);
+            border: 1px solid var(--neon-blue);
+            border-radius: 3px;
+            box-shadow: 0 0 20px rgba(0, 243, 255, 0.2);
+            padding: 20px;
+            transform: translateZ(10px);
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+        }
+
+        .menu-section {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .section-title {
+            font-size: 1.2em;
+            color: var(--neon-purple);
+            margin-bottom: 5px;
+            padding-bottom: 5px;
+            border-bottom: 1px solid rgba(0, 243, 255, 0.3);
+            text-shadow: 0 0 5px var(--neon-purple);
+        }
+
+        .menu-item {
+            padding: 12px 15px;
+            border-radius: 3px;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .menu-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0, 243, 255, 0.1), transparent);
+            transition: all 0.5s;
+        }
+
+        .menu-item:hover {
+            background-color: rgba(0, 243, 255, 0.1);
+            box-shadow: 0 0 10px rgba(0, 243, 255, 0.2);
+        }
+
+        .menu-item:hover::before {
+            left: 100%;
+        }
+
+        .menu-item.active {
+            background-color: rgba(0, 243, 255, 0.2);
+            border-left: 3px solid var(--neon-blue);
+            box-shadow: 0 0 15px rgba(0, 243, 255, 0.3);
+        }
+
+        .menu-item .icon {
+            width: 20px;
+            height: 20px;
+            background: linear-gradient(135deg, var(--neon-blue), var(--neon-purple));
+            border-radius: 3px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* المنطقة المركزية - شاشة الهولوجرام */
+        .main-content {
+            grid-column: 2;
+            grid-row: 2;
+            background-color: var(--dark-layer);
+            border: 1px solid var(--neon-blue);
+            border-radius: 3px;
+            box-shadow: 0 0 30px rgba(0, 243, 255, 0.3);
+            transform: translateZ(30px);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .holographic-display {
+            flex: 1;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .hologram-screen {
+            width: 90%;
+            height: 90%;
+            background-color: rgba(0, 15, 30, 0.7);
+            border: 1px solid var(--neon-blue);
+            box-shadow: 
+                inset 0 0 20px rgba(0, 243, 255, 0.3),
+                0 0 40px rgba(0, 243, 255, 0.2);
+            position: relative;
+            transform-style: preserve-3d;
+            transform: rotateX(5deg);
+        }
+
+        .hologram-screen::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                linear-gradient(135deg, transparent 45%, rgba(0, 243, 255, 0.1) 50%, transparent 55%),
+                linear-gradient(-135deg, transparent 45%, rgba(189, 0, 255, 0.1) 50%, transparent 55%);
+            background-size: 200% 200%;
+            animation: hologramPattern 8s infinite alternate;
+            pointer-events: none;
+        }
+
+        @keyframes hologramPattern {
+            0% { background-position: 0% 0%; }
+            100% { background-position: 100% 100%; }
+        }
+
+        .hologram-content {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .data-panel {
+            flex: 1;
+            background-color: rgba(0, 5, 15, 0.7);
+            border: 1px solid var(--neon-blue);
+            margin-bottom: 15px;
+            padding: 15px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            line-height: 1.6;
+            overflow-y: auto;
+            position: relative;
+        }
+
+        .data-panel::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 20px;
+            background: linear-gradient(rgba(0, 5, 15, 0.9), transparent);
+        }
+
+        .data-panel::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 20px;
+            background: linear-gradient(transparent, rgba(0, 5, 15, 0.9));
+        }
+
+        .code-line {
+            margin-bottom: 5px;
+            white-space: pre-wrap;
+            word-break: break-all;
+        }
+
+        .command { color: var(--neon-green); }
+        .output { color: var(--neon-blue); }
+        .error { color: var(--neon-pink); }
+        .warning { color: var(--neon-yellow); }
+        .comment { color: #666; }
+        .success { color: var(--neon-green); font-weight: bold; }
+        .progress { color: var(--neon-purple); }
+        .highlight { color: var(--neon-red); font-weight: bold; }
+
+        .visualization {
+            height: 200px;
+            background-color: rgba(0, 10, 20, 0.5);
+            border: 1px solid var(--neon-purple);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .graph {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: flex-end;
+        }
+
+        .bar {
+            flex: 1;
+            background: linear-gradient(to top, var(--neon-blue), var(--neon-purple));
+            margin: 0 2px;
+            position: relative;
+            transform-origin: bottom;
+            animation: graphGrow 2s ease-out;
+        }
+
+        @keyframes graphGrow {
+            from { transform: scaleY(0); }
+            to { transform: scaleY(1); }
+        }
+
+        .network-map {
+            width: 100%;
+            height: 100%;
+            position: relative;
+        }
+
+        .node {
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background-color: var(--neon-blue);
+            box-shadow: 0 0 10px var(--neon-blue);
+            transform: translate(-50%, -50%);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .node:hover {
+            transform: translate(-50%, -50%) scale(1.5);
+        }
+
+        .node.server {
+            background-color: var(--neon-pink);
+            box-shadow: 0 0 10px var(--neon-pink);
+            width: 16px;
+            height: 16px;
+        }
+
+        .node.target {
+            background-color: var(--neon-green);
+            box-shadow: 0 0 10px var(--neon-green);
+            width: 18px;
+            height: 18px;
+            animation: pulse 1.5s infinite;
+        }
+
+        .connection {
+            position: absolute;
+            height: 2px;
+            background-color: rgba(0, 243, 255, 0.3);
+            transform-origin: 0 0;
+            pointer-events: none;
+        }
+
+        .connection.active {
+            background-color: var(--neon-blue);
+            box-shadow: 0 0 5px var(--neon-blue);
+            animation: connectionPulse 1s infinite;
+        }
+
+        @keyframes connectionPulse {
+            0% { opacity: 0.3; }
+            50% { opacity: 1; }
+            100% { opacity: 0.3; }
+        }
+
+        /* الشريط الجانبي الأيمن - لوحة التحكم */
+        .sidebar-right {
+            grid-column: 3;
+            grid-row: 2;
+            background-color: var(--dark-layer);
+            border: 1px solid var(--neon-blue);
+            border-radius: 3px;
+            box-shadow: 0 0 20px rgba(0, 243, 255, 0.2);
+            padding: 20px;
+            transform: translateZ(10px);
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+        }
+
+        .control-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .control-label {
+            font-size: 0.9em;
+            color: var(--neon-purple);
+            text-shadow: 0 0 5px var(--neon-purple);
+        }
+
+        .control-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px;
+            border-radius: 3px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .control-item:hover {
+            background-color: rgba(0, 243, 255, 0.1);
+            box-shadow: 0 0 10px rgba(0, 243, 255, 0.1);
+        }
+
+        .control-checkbox {
+            width: 16px;
+            height: 16px;
+            border: 1px solid var(--neon-blue);
+            border-radius: 3px;
+            position: relative;
+            transition: all 0.3s;
+        }
+
+        .control-checkbox::after {
+            content: '';
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            right: 2px;
+            bottom: 2px;
+            background-color: var(--neon-blue);
+            border-radius: 1px;
+            opacity: 0;
+            transition: all 0.3s;
+            box-shadow: 0 0 5px var(--neon-blue);
+        }
+
+        .control-item.active .control-checkbox::after {
+            opacity: 1;
+        }
+
+        .slider-container {
+            width: 100%;
+            position: relative;
+            height: 20px;
+            margin-top: 5px;
+        }
+
+        .slider-track {
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background-color: rgba(0, 243, 255, 0.3);
+            transform: translateY(-50%);
+        }
+
+        .slider-thumb {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 12px;
+            height: 12px;
+            background-color: var(--neon-blue);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            cursor: grab;
+            box-shadow: 0 0 10px var(--neon-blue);
+            z-index: 10;
+        }
+
+        /* شريط الأدوات السفلي */
+        .toolbar {
+            grid-column: 1 / 4;
+            grid-row: 3;
+            background-color: var(--dark-layer);
+            border: 1px solid var(--neon-blue);
+            border-radius: 3px;
+            box-shadow: 0 0 20px rgba(0, 243, 255, 0.2);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 25px;
+            transform: translateZ(20px);
+        }
+
+        .tool-group {
+            display: flex;
+            gap: 20px;
+        }
+
+        .tool-button {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .tool-icon {
+            width: 30px;
+            height: 30px;
+            background: linear-gradient(135deg, var(--neon-blue), var(--neon-purple));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2em;
+            transition: all 0.3s;
+        }
+
+        .tool-button:hover .tool-icon {
+            transform: scale(1.1);
+            box-shadow: 0 0 15px var(--neon-blue);
+        }
+
+        .tool-label {
+            font-size: 0.8em;
+            color: var(--neon-blue);
+            text-shadow: 0 0 5px var(--neon-blue);
+        }
+
+        .system-info {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .system-time {
+            font-size: 1.3em;
+            font-weight: bold;
+            background: linear-gradient(90deg, var(--neon-blue), var(--neon-green));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 0 0 10px rgba(0, 243, 255, 0.5);
+        }
+
+        .system-date {
+            font-size: 0.8em;
+            color: var(--neon-purple);
+        }
+
+        /* تأثيرات ثلاثية الأبعاد */
+        .hologram-cube {
+            position: absolute;
+            width: 100px;
+            height: 100px;
+            transform-style: preserve-3d;
+            animation: rotateCube 20s infinite linear;
+            pointer-events: none;
+        }
+
+        .cube-face {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border: 1px solid var(--neon-blue);
+            background-color: rgba(0, 243, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8em;
+            color: var(--neon-blue);
+        }
+
+        .cube-face.front { transform: translateZ(50px); }
+        .cube-face.back { transform: rotateY(180deg) translateZ(50px); }
+        .cube-face.right { transform: rotateY(90deg) translateZ(50px); }
+        .cube-face.left { transform: rotateY(-90deg) translateZ(50px); }
+        .cube-face.top { transform: rotateX(90deg) translateZ(50px); }
+        .cube-face.bottom { transform: rotateX(-90deg) translateZ(50px); }
+
+        @keyframes rotateCube {
+            from { transform: rotateX(0) rotateY(0) rotateZ(0); }
+            to { transform: rotateX(360deg) rotateY(360deg) rotateZ(360deg); }
+        }
+
+        /* أشكال هولوجرامية متخصصة */
+        .hologram-shape {
+            position: absolute;
+            transform-style: preserve-3d;
+            pointer-events: none;
+        }
+
+        .hologram-pyramid {
+            width: 120px;
+            height: 120px;
+            transform: rotateX(60deg) rotateZ(45deg);
+        }
+
+        .pyramid-face {
+            position: absolute;
+            width: 0;
+            height: 0;
+            border-left: 60px solid transparent;
+            border-right: 60px solid transparent;
+            border-bottom: 100px solid rgba(0, 243, 255, 0.1);
+            transform-origin: 50% 0%;
+        }
+
+        .pyramid-face.front { transform: rotateY(0deg) translateZ(30px); border-bottom-color: rgba(0, 243, 255, 0.1); }
+        .pyramid-face.back { transform: rotateY(180deg) translateZ(30px); border-bottom-color: rgba(189, 0, 255, 0.1); }
+        .pyramid-face.right { transform: rotateY(90deg) translateZ(30px); border-bottom-color: rgba(0, 255, 157, 0.1); }
+        .pyramid-face.left { transform: rotateY(-90deg) translateZ(30px); border-bottom-color: rgba(255, 0, 247, 0.1); }
+
+        .hologram-sphere {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            border: 2px solid var(--neon-blue);
+            box-shadow: 0 0 20px var(--neon-blue), inset 0 0 20px var(--neon-blue);
+            background: radial-gradient(circle at 30% 30%, rgba(0, 243, 255, 0.2), transparent 70%);
+        }
+
+        .hologram-cylinder {
+            width: 80px;
+            height: 120px;
+            border-radius: 50%/10%;
+            border: 2px solid var(--neon-purple);
+            box-shadow: 0 0 20px var(--neon-purple), inset 0 0 20px var(--neon-purple);
+            background: linear-gradient(to bottom, rgba(189, 0, 255, 0.1), transparent);
+        }
+
+        .hologram-torus {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            border: 10px solid transparent;
+            border-top-color: var(--neon-green);
+            border-bottom-color: var(--neon-green);
+            box-shadow: 0 0 15px var(--neon-green), inset 0 0 15px var(--neon-green);
+            animation: rotateTorus 10s infinite linear;
+        }
+
+        @keyframes rotateTorus {
+            from { transform: rotateX(60deg) rotateZ(0); }
+            to { transform: rotateX(60deg) rotateZ(360deg); }
+        }
+
+        /* تصميم متجاوب */
+        @media (max-width: 1200px) {
+            .main-container {
+                grid-template-columns: 220px 1fr 250px;
+            }
+        }
+
+        @media (max-width: 992px) {
+            .main-container {
+                grid-template-columns: 1fr;
+                grid-template-rows: auto auto auto auto;
+            }
+
+            .header {
+                grid-column: 1;
+                grid-row: 1;
+            }
+
+            .sidebar-left {
+                grid-column: 1;
+                grid-row: 2;
+            }
+
+            .main-content {
+                grid-column: 1;
+                grid-row: 3;
+            }
+
+            .sidebar-right {
+                grid-column: 1;
+                grid-row: 4;
+            }
+
+            .toolbar {
+                grid-column: 1;
+                grid-row: 5;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .logo {
+                font-size: 1.3em;
+            }
+
+            .system-status {
+                gap: 15px;
+            }
+
+            .tool-group {
+                gap: 10px;
+            }
+
+            .tool-icon {
+                width: 25px;
+                height: 25px;
+                font-size: 1em;
+            }
+
+            .tool-label {
+                font-size: 0.7em;
+            }
+        }
+
+        /* أنماط إضافية لواجهة الأوامر */
+        .command-input {
+            display: flex;
+            margin-top: 10px;
+        }
+
+        .prompt {
+            color: var(--neon-green);
+            margin-right: 10px;
+        }
+
+        #command-field {
+            flex: 1;
+            background: transparent;
+            border: none;
+            border-bottom: 1px solid var(--neon-blue);
+            color: var(--neon-blue);
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            outline: none;
+            padding: 5px;
+        }
+
+        #command-field:focus {
+            border-bottom-color: var(--neon-green);
+            box-shadow: 0 1px 0 0 var(--neon-green);
+        }
+
+        /* نافذة النتائج */
+        .result-window {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 70%;
+            height: 70%;
+            background-color: var(--darker-layer);
+            border: 2px solid var(--neon-purple);
+            box-shadow: 0 0 30px rgba(189, 0, 255, 0.5);
+            z-index: 1000;
+            display: none;
+            flex-direction: column;
+        }
+
+        .result-header {
+            padding: 10px 15px;
+            background-color: rgba(189, 0, 255, 0.2);
+            border-bottom: 1px solid var(--neon-purple);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .result-title {
+            color: var(--neon-purple);
+            font-weight: bold;
+        }
+
+        .close-result {
+            color: var(--neon-pink);
+            cursor: pointer;
+            font-size: 1.2em;
+            transition: all 0.3s;
+        }
+
+        .close-result:hover {
+            transform: scale(1.2);
+        }
+
+        .result-content {
+            flex: 1;
+            padding: 15px;
+            overflow-y: auto;
+            font-family: 'Courier New', monospace;
+        }
+
+        /* تأثيرات النص المتحرك */
+        .typing {
+            border-right: 2px solid var(--neon-green);
+            animation: blinkCursor 0.7s infinite;
+        }
+
+        @keyframes blinkCursor {
+            from { border-right-color: var(--neon-green); }
+            to { border-right-color: transparent; }
+        }
+
+        /* أدوات التنزيل */
+        .tool-card {
+            background-color: rgba(0, 10, 20, 0.7);
+            border: 1px solid var(--neon-blue);
+            border-radius: 3px;
+            padding: 15px;
+            margin-bottom: 15px;
+            transition: all 0.3s;
+        }
+
+        .tool-card:hover {
+            box-shadow: 0 0 20px rgba(0, 243, 255, 0.3);
+            transform: translateY(-3px);
+        }
+
+        .tool-title {
+            color: var(--neon-green);
+            font-weight: bold;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .tool-desc {
+            color: var(--neon-blue);
+            font-size: 0.9em;
+            margin-bottom: 10px;
+        }
+
+        .tool-link {
+            color: var(--neon-purple);
+            font-size: 0.8em;
+            word-break: break-all;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        .download-btn {
+            background: linear-gradient(to right, var(--neon-blue), var(--neon-purple));
+            border: none;
+            color: #000;
+            padding: 5px 10px;
+            border-radius: 3px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+
+        .download-btn:hover {
+            box-shadow: 0 0 10px var(--neon-blue);
+        }
+
+        /* شاشة التحميل */
+        .loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #000;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+
+        .loading-logo {
+            font-size: 3em;
+            font-weight: bold;
+            background: linear-gradient(90deg, var(--neon-blue), var(--neon-purple));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 0 0 20px rgba(0, 243, 255, 0.5);
+            letter-spacing: 5px;
+            margin-bottom: 30px;
+        }
+
+        .loading-bar {
+            width: 300px;
+            height: 10px;
+            background-color: rgba(0, 243, 255, 0.1);
+            border-radius: 5px;
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+
+        .loading-progress {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(to right, var(--neon-blue), var(--neon-purple));
+            border-radius: 5px;
+            transition: width 0.3s;
+        }
+
+        .loading-text {
+            color: var(--neon-blue);
+            font-size: 0.9em;
+        }
+    </style>
+</head>
+<body>
+    <!-- شاشة التحميل -->
+    <div class="loading-screen" id="loading-screen">
+        <div class="loading-logo">NHHS <span class="logo-pro">PRO</span></div>
+        <div class="loading-bar">
+            <div class="loading-progress" id="loading-progress"></div>
+        </div>
+        <div class="loading-text" id="loading-text">جاري تحميل النظام...</div>
+    </div>
+
+    <!-- تأثيرات الهولوجرام -->
+    <div class="hologram-effect"></div>
+    <div class="grid-lines"></div>
+    <div class="particles" id="particles"></div>
+
+    <!-- الهيكل الرئيسي -->
+    <div class="main-container">
+        <!-- شريط العنوان -->
+        <div class="header">
+            <div class="logo">NHHS <span class="logo-pro">PRO</span></div>
+            <div class="system-status">
+                <div class="status-item" id="system-status">
+                    <div class="status-indicator"></div>
+                    <span>النظام</span>
+                </div>
+                <div class="status-item" id="network-status">
+                    <div class="status-indicator"></div>
+                    <span>الشبكة</span>
+                </div>
+                <div class="status-item" id="security-status">
+                    <div class="status-indicator critical"></div>
+                    <span>الأمان</span>
+                </div>
+                <div class="status-item" id="data-status">
+                    <div class="status-indicator"></div>
+                    <span>البيانات</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- الشريط الجانبي الأيسر -->
+        <div class="sidebar-left">
+            <div class="menu-section">
+                <div class="section-title">أدوات القرصنة</div>
+                <div class="menu-item active" data-tool="hologram">
+                    <div class="icon"></div>
+                    <span>شاشة الهولوجرام</span>
+                </div>
+                <div class="menu-item" data-tool="network-scan">
+                    <div class="icon"></div>
+                    <span>مسح الشبكة</span>
+                </div>
+                <div class="menu-item" data-tool="exploit">
+                    <div class="icon"></div>
+                    <span>استغلال الثغرات</span>
+                </div>
+                <div class="menu-item" data-tool="sql-inject">
+                    <div class="icon"></div>
+                    <span>حقن SQL</span>
+                </div>
+                <div class="menu-item" data-tool="bruteforce">
+                    <div class="icon"></div>
+                    <span>هجوم القوة الغاشمة</span>
+                </div>
+                <div class="menu-item" data-tool="ddos">
+                    <div class="icon"></div>
+                    <span>هجوم حجب الخدمة</span>
+                </div>
+                <div class="menu-item" data-tool="password-crack">
+                    <div class="icon"></div>
+                    <span>كسر كلمات المرور</span>
+                </div>
+                <div class="menu-item" data-tool="wifi-hack">
+                    <div class="icon"></div>
+                    <span>اختراق الشبكات اللاسلكية</span>
+                </div>
+            </div>
+
+            <div class="menu-section">
+                <div class="section-title">الأجهزة</div>
+                <div class="menu-item" data-device="computers">
+                    <div class="icon"></div>
+                    <span>أجهزة الحوسبة</span>
+                </div>
+                <div class="menu-item" data-device="smartphones">
+                    <div class="icon"></div>
+                    <span>الهواتف الذكية</span>
+                </div>
+                <div class="menu-item" data-device="tablets">
+                    <div class="icon"></div>
+                    <span>الأجهزة اللوحية</span>
+                </div>
+                <div class="menu-item" data-device="iot">
+                    <div class="icon"></div>
+                    <span>أجهزة IoT</span>
+                </div>
+                <div class="menu-item" data-device="servers">
+                    <div class="icon"></div>
+                    <span>الخوادم</span>
+                </div>
+            </div>
+
+            <div class="menu-section">
+                <div class="section-title">المرئيات</div>
+                <div class="menu-item" data-view="graphs">
+                    <div class="icon"></div>
+                    <span>الرسوم البيانية</span>
+                </div>
+                <div class="menu-item" data-view="network-map">
+                    <div class="icon"></div>
+                    <span>خرائط الشبكة</span>
+                </div>
+                <div class="menu-item" data-view="3d-models">
+                    <div class="icon"></div>
+                    <span>نماذج ثلاثية الأبعاد</span>
+                </div>
+                <div class="menu-item" data-view="downloads">
+                    <div class="icon"></div>
+                    <span>تنزيل الأدوات</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- المنطقة المركزية -->
+        <div class="main-content">
+            <div class="holographic-display">
+                <div class="hologram-screen">
+                    <div class="hologram-content">
+                        <div class="data-panel" id="data-panel">
+                            <div class="code-line command">>> بدء تشغيل نظام NHHS PRO</div>
+                            <div class="code-line output">[*] تحميل الوحدات النمطية...</div>
+                            <div class="code-line output">[+] وحدة مسح الشبكة جاهزة</div>
+                            <div class="code-line output">[+] وحدة استغلال الثغرات جاهزة</div>
+                            <div class="code-line output">[+] وحدة حقن SQL جاهزة</div>
+                            <div class="code-line output">[+] وحدة القوة الغاشمة جاهزة</div>
+                            <div class="code-line success">[!] النظام جاهز للعمل</div>
+                            <div class="code-line command">>> اكتب "مساعدة" لعرض الأوامر المتاحة</div>
+                        </div>
+
+                        <div class="visualization" id="visualization">
+                            <div class="graph">
+                                <div class="bar" style="height: 30%;"></div>
+                                <div class="bar" style="height: 70%;"></div>
+                                <div class="bar" style="height: 45%;"></div>
+                                <div class="bar" style="height: 90%;"></div>
+                                <div class="bar" style="height: 60%;"></div>
+                                <div class="bar" style="height: 20%;"></div>
+                                <div class="bar" style="height: 85%;"></div>
+                                <div class="bar" style="height: 40%;"></div>
+                                <div class="bar" style="height: 75%;"></div>
+                                <div class="bar" style="height: 50%;"></div>
+                            </div>
+                        </div>
+
+                        <div class="command-input">
+                            <span class="prompt">>></span>
+                            <input type="text" id="command-field" placeholder="أدخل الأمر هنا..." autocomplete="off">
+                        </div>
+                    </div>
+
+                    <!-- تأثيرات ثلاثية الأبعاد -->
+                    <div class="hologram-cube" style="top: 20%; left: 10%;">
+                        <div class="cube-face front">NHHS</div>
+                        <div class="cube-face back">PRO</div>
+                        <div class="cube-face right">HACK</div>
+                        <div class="cube-face left">SYSTEM</div>
+                        <div class="cube-face top">NEON</div>
+                        <div class="cube-face bottom">ACTIVE</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- الشريط الجانبي الأيمن -->
+        <div class="sidebar-right">
+            <div class="control-panel">
+                <div class="control-group">
+                    <div class="control-label">نوع الهجوم</div>
+                    <div class="control-item active" data-attack="scan">
+                        <div class="control-checkbox"></div>
+                        <span>مسح الشبكة</span>
+                    </div>
+                    <div class="control-item" data-attack="exploit">
+                        <div class="control-checkbox"></div>
+                        <span>استغلال الثغرات</span>
+                    </div>
+                    <div class="control-item" data-attack="inject">
+                        <div class="control-checkbox"></div>
+                        <span>حقن SQL</span>
+                    </div>
+                    <div class="control-item" data-attack="bruteforce">
+                        <div class="control-checkbox"></div>
+                        <span>قوة غاشمة</span>
+                    </div>
+                    <div class="control-item" data-attack="ddos">
+                        <div class="control-checkbox"></div>
+                        <span>حجب الخدمة</span>
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <div class="control-label">المرشحات</div>
+                    <div class="control-item active" data-filter="auto">
+                        <div class="control-checkbox"></div>
+                        <span>تلقائي</span>
+                    </div>
+                    <div class="control-item" data-filter="manual">
+                        <div class="control-checkbox"></div>
+                        <span>يدوي</span>
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <div class="control-label">شدة الهجوم</div>
+                    <div class="slider-container">
+                        <div class="slider-track"></div>
+                        <div class="slider-thumb" id="intensity-slider"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="control-panel">
+                <div class="control-group">
+                    <div class="control-label">الأجهزة المستهدفة</div>
+                    <div class="control-item active" data-target="computers">
+                        <div class="control-checkbox"></div>
+                        <span>أجهزة الحوسبة</span>
+                    </div>
+                    <div class="control-item active" data-target="smartphones">
+                        <div class="control-checkbox"></div>
+                        <span>الهواتف</span>
+                    </div>
+                    <div class="control-item" data-target="tablets">
+                        <div class="control-checkbox"></div>
+                        <span>الأجهزة اللوحية</span>
+                    </div>
+                    <div class="control-item" data-target="iot">
+                        <div class="control-checkbox"></div>
+                        <span>أجهزة IoT</span>
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <div class="control-label">خيارات متقدمة</div>
+                    <div class="control-item" data-option="stealth">
+                        <div class="control-checkbox"></div>
+                        <span>وضع التخفي</span>
+                    </div>
+                    <div class="control-item" data-option="auto-clean">
+                        <div class="control-checkbox"></div>
+                        <span>حذف السجلات</span>
+                    </div>
+                    <div class="control-item" data-option="encrypt">
+                        <div class="control-checkbox"></div>
+                        <span>التشفير التلقائي</span>
+                    </div>
+                    <div class="control-item" data-option="proxy">
+                        <div class="control-checkbox"></div>
+                        <span>استخدام بروكسي</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- شريط الأدوات السفلي -->
+        <div class="toolbar">
+            <div class="tool-group">
+                <div class="tool-button" id="devices-btn">
+                    <div class="tool-icon">💻</div>
+                    <div class="tool-label">الأجهزة</div>
+                </div>
+                <div class="tool-button" id="analytics-btn">
+                    <div class="tool-icon">📊</div>
+                    <div class="tool-label">التحليلات</div>
+                </div>
+                <div class="tool-button" id="search-btn">
+                    <div class="tool-icon">🔍</div>
+                    <div class="tool-label">البحث</div>
+                </div>
+                <div class="tool-button" id="downloads-btn">
+                    <div class="tool-icon">📥</div>
+                    <div class="tool-label">التنزيلات</div>
+                </div>
+            </div>
+
+            <div class="system-info">
+                <div class="system-time" id="system-time">22:14:36</div>
+                <div class="system-date" id="system-date">2025/05/06</div>
+            </div>
+
+            <div class="tool-group">
+                <div class="tool-button" id="settings-btn">
+                    <div class="tool-icon">⚙️</div>
+                    <div class="tool-label">الإعدادات</div>
+                </div>
+                <div class="tool-button" id="security-btn">
+                    <div class="tool-icon">🔒</div>
+                    <div class="tool-label">الأمان</div>
+                </div>
+                <div class="tool-button" id="emergency-btn">
+                    <div class="tool-icon">🚨</div>
+                    <div class="tool-label">الطوارئ</div>
+                </div>
+                <div class="tool-button" id="terminal-btn">
+                    <div class="tool-icon">⌨️</div>
+                    <div class="tool-label">المحطة</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- نافذة النتائج -->
+    <div class="result-window" id="result-window">
+        <div class="result-header">
+            <div class="result-title" id="result-title">نتائج المسح</div>
+            <div class="close-result" id="close-result">✕</div>
+        </div>
+        <div class="result-content" id="result-content"></div>
+    </div>
+
+    <!-- مكتبات الأصوات -->
+    <audio id="click-sound" src="https://assets.mixkit.co/sfx/preview/mixkit-select-click-1109.mp3" preload="auto"></audio>
+    <audio id="typing-sound" src="https://assets.mixkit.co/sfx/preview/mixkit-fast-typing-1116.mp3" preload="auto"></audio>
+    <audio id="scan-sound" src="https://assets.mixkit.co/sfx/preview/mixkit-sci-fi-bleep-908.mp3" preload="auto"></audio>
+    <audio id="success-sound" src="https://assets.mixkit.co/sfx/preview/mixkit-achievement-bell-600.mp3" preload="auto"></audio>
+    <audio id="error-sound" src="https://assets.mixkit.co/sfx/preview/mixkit-warning-alarm-688.mp3" preload="auto"></audio>
+    <audio id="hack-sound" src="https://assets.mixkit.co/sfx/preview/mixkit-hacker-matrix-loop-1701.mp3" preload="auto"></audio>
+    <audio id="download-sound" src="https://assets.mixkit.co/sfx/preview/mixkit-unlock-game-notification-253.mp3" preload="auto"></audio>
+    <audio id="alert-sound" src="https://assets.mixkit.co/sfx/preview/mixkit-alarm-digital-clock-beep-989.mp3" preload="auto"></audio>
+
+    <script>
+        // إنشاء جسيمات متحركة
+        function createParticles() {
+            const particlesContainer = document.getElementById('particles');
+            const particleCount = 100;
+            
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.classList.add('particle');
+                
+                // أحجام عشوائية
+                const size = Math.random() * 4 + 1;
+                particle.style.width = `${size}px`;
+                particle.style.height = `${size}px`;
+                
+                // مواقع عشوائية
+                particle.style.left = `${Math.random() * 100}%`;
+                particle.style.bottom = `-10px`;
+                
+                // ألوان نيون عشوائية
+                const colors = ['--neon-blue', '--neon-purple', '--neon-pink', '--neon-green'];
+                const randomColor = colors[Math.floor(Math.random() * colors.length)];
+                particle.style.backgroundColor = `var(${randomColor})`;
+                
+                // سرعات عشوائية
+                const duration = Math.random() * 15 + 5;
+                particle.style.animationDuration = `${duration}s`;
+                
+                // تأخير عشوائي
+                const delay = Math.random() * 10;
+                particle.style.animationDelay = `${delay}s`;
+                
+                particlesContainer.appendChild(particle);
+            }
+        }
+
+        // تشغيل صوت
+        function playSound(soundId, loop = false) {
+            const sound = document.getElementById(soundId);
+            sound.currentTime = 0;
+            sound.loop = loop;
+            sound.play().catch(e => console.log("لم يتم تشغيل الصوت:", e));
+        }
+
+        // إيقاف صوت
+        function stopSound(soundId) {
+            const sound = document.getElementById(soundId);
+            sound.pause();
+            sound.currentTime = 0;
+        }
+
+        // تحديث الوقت في النظام
+        function updateSystemTime() {
+            const now = new Date();
+            const timeStr = now.toLocaleTimeString('ar-EG', {hour12: false});
+            const dateStr = now.toLocaleDateString('ar-EG');
+            document.getElementById('system-time').textContent = timeStr;
+            document.getElementById('system-date').textContent = dateStr;
+        }
+
+        // إضافة سطر إلى لوحة البيانات
+        function addDataLine(text, type = 'output') {
+            const dataPanel = document.getElementById('data-panel');
+            const line = document.createElement('div');
+            line.className = `code-line ${type}`;
+            line.textContent = text;
+            dataPanel.appendChild(line);
+            dataPanel.scrollTop = dataPanel.scrollHeight;
+            
+            // تشغيل صوت الكتابة
+            if (type !== 'command') {
+                playSound('typing-sound');
+            }
+        }
+
+        // عرض رسالة ترحيبية
+        function showWelcomeMessage() {
+            const messages = [
+                {text: ">> نظام NHHS PRO جاهز للعمل", type: "command"},
+                {text: ">> اكتب 'مساعدة' لعرض قائمة الأوامر", type: "output"},
+                {text: ">> أو اختر أداة من القائمة الجانبية", type: "output"}
+            ];
+            
+            let delay = 500;
+            messages.forEach(msg => {
+                setTimeout(() => {
+                    addDataLine(msg.text, msg.type);
+                }, delay);
+                delay += 800;
+            });
+        }
+
+        // عرض قائمة الأوامر
+        function showHelp() {
+            const commands = [
+                {cmd: "مساعدة", desc: "عرض قائمة الأوامر المتاحة"},
+                {cmd: "مسح", desc: "بدء مسح الشبكة"},
+                {cmd: "استغلال", desc: "بدء استغلال الثغرات"},
+                {cmd: "حقن", desc: "بدء هجوم حقن SQL"},
+                {cmd: "قوة-غاشمة", desc: "بدء هجوم القوة الغاشمة"},
+                {cmd: "حجب-خدمة", desc: "بدء هجوم حجب الخدمة"},
+                {cmd: "تخفي", desc: "تفعيل وضع التخفي"},
+                {cmd: "مسح-السجلات", desc: "حذف سجلات النشاط"},
+                {cmd: "تنزيل-أدوات", desc: "فتح قسم تنزيل الأدوات"},
+                {cmd: "خروج", desc: "إغلاق النظام"}
+            ];
+            
+            addDataLine(">> الأوامر المتاحة:", "command");
+            commands.forEach(cmd => {
+                addDataLine(`   ${cmd.cmd}: ${cmd.desc}`, "output");
+            });
+        }
+
+        // إنشاء شكل هولوجرامي
+        function createHologramShape(type, position = {x: 50, y: 50}) {
+            const hologramScreen = document.querySelector('.hologram-screen');
+            const shape = document.createElement('div');
+            shape.className = `hologram-shape hologram-${type}`;
+            shape.style.left = `${position.x}%`;
+            shape.style.top = `${position.y}%`;
+            
+            if (type === 'pyramid') {
+                shape.innerHTML = `
+                    <div class="pyramid-face front"></div>
+                    <div class="pyramid-face back"></div>
+                    <div class="pyramid-face right"></div>
+                    <div class="pyramid-face left"></div>
+                `;
+            }
+            
+            hologramScreen.appendChild(shape);
+            
+            // اختفاء تدريجي بعد 5 ثواني
+            setTimeout(() => {
+                shape.style.opacity = '0';
+                setTimeout(() => {
+                    shape.remove();
+                }, 1000);
+            }, 5000);
+            
+            return shape;
+        }
+
+        // عرض أدوات التنزيل
+        function showDownloads() {
+            const tools = [
+                {
+                    name: "Nmap",
+                    desc: "أداة مسح الشبكات واكتشاف الثغرات",
+                    link: "https://github.com/nmap/nmap",
+                    cmd: "nmap"
+                },
+                {
+                    name: "Metasploit",
+                    desc: "إطار عمل لاختبار الاختراق وتطوير الثغرات",
+                    link: "https://github.com/rapid7/metasploit-framework",
+                    cmd: "msfconsole"
+                },
+                {
+                    name: "Hydra",
+                    desc: "أداة كسر كلمات المرور بالقوة الغاشمة",
+                    link: "https://github.com/vanhauser-thc/thc-hydra",
+                    cmd: "hydra"
+                },
+                {
+                    name: "John the Ripper",
+                    desc: "أداة كسر كلمات المرور المتقدمة",
+                    link: "https://github.com/openwall/john",
+                    cmd: "john"
+                },
+                {
+                    name: "Wireshark",
+                    desc: "أداة تحليل حركة الشبكة",
+                    link: "https://github.com/wireshark/wireshark",
+                    cmd: "wireshark"
+                },
+                {
+                    name: "Aircrack-ng",
+                    desc: "أداة اختراق الشبكات اللاسلكية",
+                    link: "https://github.com/aircrack-ng/aircrack-ng",
+                    cmd: "aircrack"
+                },
+                {
+                    name: "Burp Suite",
+                    desc: "منصة لاختبار أمان تطبيقات الويب",
+                    link: "https://portswigger.net/burp",
+                    cmd: "burpsuite"
+                },
+                {
+                    name: "SQLmap",
+                    desc: "أداة أتمتة هجمات حقن SQL",
+                    link: "https://github.com/sqlmapproject/sqlmap",
+                    cmd: "sqlmap"
+                }
+            ];
+            
+            let content = '<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">';
+            
+            tools.forEach(tool => {
+                content += `
+                    <div class="tool-card" data-tool="${tool.cmd}">
+                        <div class="tool-title">
+                            <span>${tool.name}</span>
+                            <span class="progress">مجاني</span>
+                        </div>
+                        <div class="tool-desc">${tool.desc}</div>
+                        <a href="${tool.link}" target="_blank" class="tool-link">${tool.link}</a>
+                        <button class="download-btn" data-tool="${tool.cmd}">تنزيل</button>
+                    </div>
+                `;
+            });
+            
+            content += '</div>';
+            
+            showResultWindow("تنزيل الأدوات", content);
+            
+            // تفعيل أزرار التنزيل
+            document.querySelectorAll('.download-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const tool = this.getAttribute('data-tool');
+                    simulateDownload(tool);
+                });
+            });
+        }
+
+        // محاكاة تنزيل أداة
+        function simulateDownload(tool) {
+            playSound('download-sound');
+            
+            const steps = [
+                {text: `[*] بدء تنزيل الأداة: ${tool}`, delay: 500},
+                {text: "[+] الاتصال بالمستودع...", delay: 1000},
+                {text: "[+] جاري تنزيل الملفات...", delay: 1500},
+                {text: "[.] 25% مكتمل", delay: 800},
+                {text: "[.] 50% مكتمل", delay: 800},
+                {text: "[.] 75% مكتمل", delay: 800},
+                {text: "[+] 100% مكتمل", delay: 800},
+                {text: "[*] تثبيت التبعيات...", delay: 1500},
+                {text: "[+] تم تثبيت الأداة بنجاح", delay: 1000, type: "success"},
+                {text: `>> يمكنك الآن استخدام الأمر "${tool}"`, delay: 500, type: "command"}
+            ];
+            
+            let totalDelay = 0;
+            steps.forEach(step => {
+                totalDelay += step.delay;
+                setTimeout(() => {
+                    addDataLine(step.text, step.type || "output");
+                }, totalDelay);
+            });
+            
+            // إظهار شكل هولوجرامي
+            setTimeout(() => {
+                createHologramShape('pyramid', {x: 70, y: 30});
+            }, 2000);
+        }
+
+        // محاكاة مسح الشبكة
+        function simulateNetworkScan() {
+            playSound('scan-sound', true);
+            createHologramShape('sphere', {x: 30, y: 40});
+            
+            addDataLine(">> بدء مسح الشبكة...", "command");
+            
+            const steps = [
+                {text: "[*] البحث عن الأجهزة المتصلة بالشبكة...", delay: 800},
+                {text: "[+] تم اكتشاف 18 جهازًا نشطًا", delay: 1200},
+                {text: "[*] تحليل عناوين IP...", delay: 800},
+                {text: "[+] 3 أجهزة تعمل بنظام Windows", delay: 600},
+                {text: "[+] 5 أجهزة تعمل بنظام Linux", delay: 600},
+                {text: "[+] 7 أجهزة تعمل بنظام Android", delay: 600},
+                {text: "[+] 3 أجهزة IoT", delay: 600},
+                {text: "[*] تحديد أنظمة التشغيل...", delay: 1000},
+                {text: "[!] تحذير: 2 جهاز بهما جدار حماية نشط", delay: 1200},
+                {text: "[*] البحث عن الثغرات المحتملة...", delay: 1500},
+                {text: "[+] تم تحديد 5 ثغرات أمنية", delay: 1000},
+                {text: "[*] تحليل نقاط الضعف...", delay: 1200},
+                {text: "[+] 3 أجهزة معرضة لهجوم حقن SQL", delay: 800},
+                {text: "[+] 2 جهاز معرض لهجوم القوة الغاشمة", delay: 800},
+                {text: "[!] مسح الشبكة اكتمل بنجاح", delay: 1000, type: "success"}
+            ];
+            
+            let totalDelay = 0;
+            steps.forEach(step => {
+                totalDelay += step.delay;
+                setTimeout(() => {
+                    addDataLine(step.text, step.type || "output");
+                }, totalDelay);
+            });
+            
+            setTimeout(() => {
+                stopSound('scan-sound');
+                playSound('success-sound');
+            }, totalDelay);
+            
+            return totalDelay;
+        }
+
+        // محاكاة استغلال الثغرات
+        function simulateExploit() {
+            playSound('hack-sound', true);
+            createHologramShape('torus', {x: 60, y: 50});
+            
+            addDataLine(">> بدء استغلال الثغرات...", "command");
+            
+            const steps = [
+                {text: "[*] اختيار الهدف...", delay: 1000},
+                {text: "[+] تم اختيار الجهاز: 192.168.1.15", delay: 800},
+                {text: "[*] تحديد الثغرات المتاحة...", delay: 1200},
+                {text: "[+] الثغرة: CVE-2023-4567", delay: 800},
+                {text: "[*] تحميل وحدة الاستغلال...", delay: 1000},
+                {text: "[+] الوحدة جاهزة", delay: 600},
+                {text: "[*] بدء عملية الاستغلال...", delay: 1500},
+                {text: "[+] تم اختراق جدار الحماية", delay: 1200},
+                {text: "[*] رفع الصلاحيات...", delay: 1800},
+                {text: "[+] تم الحصول على صلاحيات المسؤول", delay: 1000},
+                {text: "[*] إنشاء نفق خلفي...", delay: 2000},
+                {text: "[+] النفق الخلفي جاهز على المنفذ 4444", delay: 1000},
+                {text: "[!] عملية الاستغلال اكتملت بنجاح", delay: 1200, type: "success"}
+            ];
+            
+            let totalDelay = 0;
+            steps.forEach(step => {
+                totalDelay += step.delay;
+                setTimeout(() => {
+                    addDataLine(step.text, step.type || "output");
+                }, totalDelay);
+            });
+            
+            setTimeout(() => {
+                stopSound('hack-sound');
+                playSound('success-sound');
+            }, totalDelay);
+            
+            return totalDelay;
+        }
+
+        // محاكاة هجوم حقن SQL
+        function simulateSQLInjection() {
+            playSound('typing-sound', true);
+            createHologramShape('cylinder', {x: 40, y: 60});
+            
+            addDataLine(">> بدء هجوم حقن SQL...", "command");
+            
+            const steps = [
+                {text: "[*] البحث عن نماذج الإدخال...", delay: 1200},
+                {text: "[+] تم العثور على نموذج تسجيل الدخول", delay: 800},
+                {text: "[*] اختبار قابلية الحقن...", delay: 1500},
+                {text: "[+] النموذج معرض لهجوم حقن SQL", delay: 1000},
+                {text: "[*] حقن شفرة SQL...", delay: 1800},
+                {text: "[+] تم تجاوز مصادقة تسجيل الدخول", delay: 1200},
+                {text: "[*] استخراج أسماء الجداول...", delay: 2000},
+                {text: "[+] الجداول: users, admin, transactions", delay: 800},
+                {text: "[*] استخراج بيانات المستخدمين...", delay: 2500},
+                {text: "[+] تم الحصول على 245 سجلًا", delay: 1000},
+                {text: "[*] تنزيل قاعدة البيانات...", delay: 3000},
+                {text: "[+] تم تنزيل ملف database_backup.sql", delay: 1200},
+                {text: "[!] هجوم حقن SQL اكتمل بنجاح", delay: 1500, type: "success"}
+            ];
+            
+            let totalDelay = 0;
+            steps.forEach(step => {
+                totalDelay += step.delay;
+                setTimeout(() => {
+                    addDataLine(step.text, step.type || "output");
+                }, totalDelay);
+            });
+            
+            setTimeout(() => {
+                stopSound('typing-sound');
+                playSound('success-sound');
+            }, totalDelay);
+            
+            return totalDelay;
+        }
+
+        // محاكاة هجوم القوة الغاشمة
+        function simulateBruteForce() {
+            playSound('typing-sound', true);
+            createHologramShape('pyramid', {x: 50, y: 50});
+            
+            addDataLine(">> بدء هجوم القوة الغاشمة...", "command");
+            
+            const steps = [
+                {text: "[*] تحديد هدف الهجوم...", delay: 1000},
+                {text: "[+] الهدف: FTP Server (192.168.1.20)", delay: 800},
+                {text: "[*] تحميل قائمة كلمات المرور...", delay: 1200},
+                {text: "[+] تم تحميل 10,000 كلمة مرور", delay: 800},
+                {text: "[*] بدء عملية الاختبار...", delay: 1500},
+                {text: "[.] اختبار كلمة المرور: 123456... فشل", delay: 200},
+                {text: "[.] اختبار كلمة المرور: password... فشل", delay: 200},
+                {text: "[.] اختبار كلمة المرور: admin123... فشل", delay: 200},
+                {text: "[.] اختبار كلمة المرور: qwerty... فشل", delay: 200},
+                {text: "[.] اختبار كلمة المرور: letmein... فشل", delay: 200},
+                {text: "[.] اختبار كلمة المرور: sunshine... فشل", delay: 200},
+                {text: "[.] اختبار كلمة المرور: 654321... فشل", delay: 200},
+                {text: "[.] اختبار كلمة المرور: football... فشل", delay: 200},
+                {text: "[.] اختبار كلمة المرور: welcome... فشل", delay: 200},
+                {text: "[+] نجاح! كلمة المرور: P@ssw0rd!", delay: 200, type: "success"},
+                {text: "[*] تسجيل الدخول إلى النظام...", delay: 1500},
+                {text: "[+] تم الدخول بنجاح كمسؤول", delay: 1000},
+                {text: "[!] هجوم القوة الغاشمة اكتمل بنجاح", delay: 1200, type: "success"}
+            ];
+            
+            let totalDelay = 0;
+            steps.forEach(step => {
+                totalDelay += step.delay;
+                setTimeout(() => {
+                    addDataLine(step.text, step.type || "output");
+                }, totalDelay);
+            });
+            
+            setTimeout(() => {
+                stopSound('typing-sound');
+                playSound('success-sound');
+            }, totalDelay);
+            
+            return totalDelay;
+        }
+
+        // محاكاة هجوم حجب الخدمة
+        function simulateDDOS() {
+            playSound('alert-sound', true);
+            createHologramShape('sphere', {x: 70, y: 30});
+            
+            addDataLine(">> بدء هجوم حجب الخدمة...", "command");
+            
+            const steps = [
+                {text: "[*] تحديد الهدف...", delay: 1000},
+                {text: "[+] الهدف: example.com (93.184.216.34)", delay: 800},
+                {text: "[*] تجنيد أجهزة الزومبي...", delay: 1500},
+                {text: "[+] 245 جهازًا جاهزًا للهجوم", delay: 1000},
+                {text: "[*] بدء إرسال الطلبات...", delay: 1200},
+                {text: "[.] إرسال حزمة #1...", delay: 100},
+                {text: "[.] إرسال حزمة #2...", delay: 100},
+                {text: "[.] إرسال حزمة #3...", delay: 100},
+                {text: "[.] إرسال حزمة #4...", delay: 100},
+                {text: "[.] إرسال حزمة #5...", delay: 100},
+                {text: "[+] معدل الطلبات: 12,345 طلب/ثانية", delay: 800},
+                {text: "[*] مراقبة استجابة الهدف...", delay: 1500},
+                {text: "[!] الهدف بدأ بالتباطؤ", delay: 1000, type: "warning"},
+                {text: "[*] زيادة كثافة الهجوم...", delay: 1200},
+                {text: "[!] الهدف غير متجاوب", delay: 1500, type: "error"},
+                {text: "[+] الهدف خارج الخدمة", delay: 1000, type: "success"},
+                {text: "[!] هجوم حجب الخدمة اكتمل بنجاح", delay: 1200, type: "success"}
+            ];
+            
+            let totalDelay = 0;
+            steps.forEach(step => {
+                totalDelay += step.delay;
+                setTimeout(() => {
+                    addDataLine(step.text, step.type || "output");
+                }, totalDelay);
+            });
+            
+            setTimeout(() => {
+                stopSound('alert-sound');
+                playSound('success-sound');
+            }, totalDelay);
+            
+            return totalDelay;
+        }
+
+        // محاكاة اختراق الشبكات اللاسلكية
+        function simulateWifiHack() {
+            playSound('scan-sound', true);
+            createHologramShape('torus', {x: 50, y: 50});
+            
+            addDataLine(">> بدء اختراق الشبكة اللاسلكية...", "command");
+            
+            const steps = [
+                {text: "[*] البحث عن الشبكات اللاسلكية...", delay: 1500},
+                {text: "[+] تم اكتشاف 3 شبكات لاسلكية", delay: 1000},
+                {text: "[*] اختيار الهدف: WiFi_Network (WPA2)", delay: 1000},
+                {text: "[*] بدء التقاط حزم المصادقة...", delay: 2000},
+                {text: "[.] جاري التقاط الحزم...", delay: 1000},
+                {text: "[.] 5 حزم ممسوحة", delay: 800},
+                {text: "[.] 15 حزمة ممسوحة", delay: 800},
+                {text: "[+] تم التقاط حزمة المصادقة بنجاح", delay: 1000},
+                {text: "[*] تحميل قائمة كلمات المرور...", delay: 1200},
+                {text: "[+] تم تحميل 10000 كلمة مرور", delay: 800},
+                {text: "[*] بدء عملية الاختبار...", delay: 1500},
+                {text: "[.] اختبار كلمة المرور: 12345678... فشل", delay: 200},
+                {text: "[.] اختبار كلمة المرور: password123... فشل", delay: 200},
+                {text: "[.] اختبار كلمة المرور: qwertyuiop... فشل", delay: 200},
+                {text: "[.] اختبار كلمة المرور: mysupersecret... فشل", delay: 200},
+                {text: "[+] نجاح! كلمة المرور: SecurePass123!", delay: 200, type: "success"},
+                {text: "[*] الاتصال بالشبكة...", delay: 1500},
+                {text: "[+] تم الاتصال بالشبكة بنجاح", delay: 1000},
+                {text: "[!] اختراق الشبكة اكتمل بنجاح", delay: 1200, type: "success"}
+            ];
+            
+            let totalDelay = 0;
+            steps.forEach(step => {
+                totalDelay += step.delay;
+                setTimeout(() => {
+                    addDataLine(step.text, step.type || "output");
+                }, totalDelay);
+            });
+            
+            setTimeout(() => {
+                stopSound('scan-sound');
+                playSound('success-sound');
+            }, totalDelay);
+            
+            return totalDelay;
+        }
+
+        // محاكاة كسر كلمات المرور
+        function simulatePasswordCrack() {
+            playSound('typing-sound', true);
+            createHologramShape('cylinder', {x: 60, y: 40});
+            
+            addDataLine(">> بدء كسر كلمات المرور...", "command");
+            
+            const steps = [
+                {text: "[*] تحميل ملف كلمات المرور...", delay: 1500},
+                {text: "[+] تم تحميل ملف يحتوي على 10000 كلمة مرور", delay: 1000},
+                {text: "[*] تحديد الهدف: ملف مشفر (MD5)", delay: 1000},
+                {text: "[*] بدء عملية الاختبار...", delay: 1200},
+                {text: "[.] اختبار كلمة المرور: 123456... فشل", delay: 200},
+                {text: "[.] اختبار كلمة المرور: password... فشل", delay: 200},
+                {text: "[.] اختبار كلمة المرور: qwerty... فشل", delay: 200},
+                {text: "[.] اختبار كلمة المرور: letmein... فشل", delay: 200},
+                {text: "[.] اختبار كلمة المرور: sunshine... فشل", delay: 200},
+                {text: "[.] اختبار كلمة المرور: 654321... فشل", delay: 200},
+                {text: "[.] اختبار كلمة المرور: football... فشل", delay: 200},
+                {text: "[.] اختبار كلمة المرور: welcome... فشل", delay: 200},
+                {text: "[+] نجاح! كلمة المرور: SecurePass123!", delay: 200, type: "success"},
+                {text: "[*] فك تشفير الملف...", delay: 1500},
+                {text: "[+] تم فك تشفير الملف بنجاح", delay: 1000},
+                {text: "[!] عملية كسر كلمة المرور اكتملت بنجاح", delay: 1200, type: "success"}
+            ];
+            
+            let totalDelay = 0;
+            steps.forEach(step => {
+                totalDelay += step.delay;
+                setTimeout(() => {
+                    addDataLine(step.text, step.type || "output");
+                }, totalDelay);
+            });
+            
+            setTimeout(() => {
+                stopSound('typing-sound');
+                playSound('success-sound');
+            }, totalDelay);
+            
+            return totalDelay;
+        }
+
+        // تفعيل وضع التخفي
+        function activateStealthMode() {
+            playSound('click-sound');
+            createHologramShape('sphere', {x: 30, y: 70});
+            
+            addDataLine(">> تفعيل وضع التخفي...", "command");
+            
+            const steps = [
+                {text: "[*] تغيير عنوان MAC...", delay: 1200},
+                {text: "[+] تم تغيير عنوان MAC بنجاح", delay: 800},
+                {text: "[*] تشفير حركة الشبكة...", delay: 1500},
+                {text: "[+] تم تفعيل تشفير AES-256", delay: 1000},
+                {text: "[*] إعادة توجيه الاتصال عبر TOR...", delay: 2000},
+                {text: "[+] تم الاتصال عبر 3 عقد TOR", delay: 1200},
+                {text: "[*] تعطيل السجلات المحلية...", delay: 1500},
+                {text: "[+] تم تعطيل جميع السجلات", delay: 1000},
+                {text: "[!] وضع التخفي مفعل الآن", delay: 1200, type: "success"}
+            ];
+            
+            let totalDelay = 0;
+            steps.forEach(step => {
+                totalDelay += step.delay;
+                setTimeout(() => {
+                    addDataLine(step.text, step.type || "output");
+                }, totalDelay);
+            });
+            
+            setTimeout(() => {
+                playSound('success-sound');
+            }, totalDelay);
+            
+            return totalDelay;
+        }
+
+        // مسح سجلات النشاط
+        function clearLogs() {
+            playSound('click-sound');
+            createHologramShape('pyramid', {x: 70, y: 60});
+            
+            addDataLine(">> بدء حذف سجلات النشاط...", "command");
+            
+            const steps = [
+                {text: "[*] البحث عن السجلات...", delay: 1200},
+                {text: "[+] تم العثور على 245 سجلًا", delay: 800},
+                {text: "[*] حذف سجلات النظام...", delay: 1500},
+                {text: "[+] تم حذف 120 سجلًا", delay: 800},
+                {text: "[*] حذف سجلات الشبكة...", delay: 1500},
+                {text: "[+] تم حذف 85 سجلًا", delay: 800},
+                {text: "[*] حذف السجلات المؤقتة...", delay: 1200},
+                {text: "[+] تم حذف 40 سجلًا", delay: 800},
+                {text: "[*] الكتابة فوق المساحة الفارغة...", delay: 2000},
+                {text: "[+] تم الكتابة فوق البيانات 7 مرات", delay: 1000},
+                {text: "[!] تم مسح جميع السجلات بنجاح", delay: 1200, type: "success"}
+            ];
+            
+            let totalDelay = 0;
+            steps.forEach(step => {
+                totalDelay += step.delay;
+                setTimeout(() => {
+                    addDataLine(step.text, step.type || "output");
+                }, totalDelay);
+            });
+            
+            setTimeout(() => {
+                playSound('success-sound');
+            }, totalDelay);
+            
+            return totalDelay;
+        }
+
+        // إنشاء خريطة شبكة تفاعلية
+        function createNetworkMap() {
+            const visualization = document.getElementById('visualization');
+            visualization.innerHTML = '<div class="network-map" id="network-map"></div>';
+            
+            const networkMap = document.getElementById('network-map');
+            networkMap.style.height = '100%';
+            
+            // إنشاء عقد الشبكة
+            const nodeCount = 15;
+            const connections = [];
+            
+            for (let i = 0; i < nodeCount; i++) {
+                const node = document.createElement('div');
+                node.className = 'node';
+                
+                // تحديد إذا كانت العقدة خادم أو هدف
+                if (i === 0) {
+                    node.classList.add('server');
+                } else if (i === 7) {
+                    node.classList.add('target');
+                }
+                
+                // مواقع عشوائية مع بعض التنظيم
+                const x = 10 + Math.random() * 80;
+                const y = 10 + Math.random() * 80;
+                node.style.left = `${x}%`;
+                node.style.top = `${y}%`;
+                
+                networkMap.appendChild(node);
+                
+                // إنشاء اتصالات بين العقد
+                if (i > 0) {
+                    const targetNode = Math.floor(Math.random() * i);
+                    connections.push({from: i, to: targetNode});
+                }
+            }
+            
+            // رسم الاتصالات
+            connections.forEach(conn => {
+                const fromNode = networkMap.children[conn.from];
+                const toNode = networkMap.children[conn.to];
+                
+                const fromRect = fromNode.getBoundingClientRect();
+                const toRect = toNode.getBoundingClientRect();
+                
+                const mapRect = networkMap.getBoundingClientRect();
+                
+                const fromX = fromRect.left + fromRect.width/2 - mapRect.left;
+                const fromY = fromRect.top + fromRect.height/2 - mapRect.top;
+                const toX = toRect.left + toRect.width/2 - mapRect.left;
+                const toY = toRect.top + toRect.height/2 - mapRect.top;
+                
+                const length = Math.sqrt(Math.pow(toX - fromX, 2) + Math.pow(toY - fromY, 2));
+                const angle = Math.atan2(toY - fromY, toX - fromX) * 180 / Math.PI;
+                
+                const connection = document.createElement('div');
+                connection.className = 'connection';
+                connection.style.width = `${length}px`;
+                connection.style.left = `${fromX}px`;
+                connection.style.top = `${fromY}px`;
+                connection.style.transform = `rotate(${angle}deg)`;
+                
+                // جعل بعض الاتصالات نشطة
+                if (Math.random() > 0.7) {
+                    connection.classList.add('active');
+                }
+                
+                networkMap.appendChild(connection);
+            });
+            
+            // جعل الخريطة تفاعلية
+            networkMap.addEventListener('click', function(e) {
+                if (e.target.classList.contains('node')) {
+                    playSound('click-sound');
+                    const nodeType = e.target.classList.contains('server') ? 'خادم' : 
+                                    e.target.classList.contains('target') ? 'هدف' : 'جهاز';
+                    addDataLine(`[+] نقرت على ${nodeType} في خريطة الشبكة`, "output");
+                }
+            });
+        }
+
+        // تحديث الرسم البياني
+        function updateGraph() {
+            const graph = document.querySelector('.graph');
+            if (!graph) return;
+            
+            graph.innerHTML = '';
+            
+            const barCount = 10 + Math.floor(Math.random() * 10);
+            for (let i = 0; i < barCount; i++) {
+                const bar = document.createElement('div');
+                bar.className = 'bar';
+                bar.style.height = `${Math.random() * 80 + 10}%`;
+                bar.style.animationDelay = `${i * 0.1}s`;
+                graph.appendChild(bar);
+            }
+        }
+
+        // عرض نافذة النتائج
+        function showResultWindow(title, content) {
+            playSound('click-sound');
+            document.getElementById('result-title').textContent = title;
+            document.getElementById('result-content').innerHTML = content;
+            document.getElementById('result-window').style.display = 'flex';
+        }
+
+        // إغلاق نافذة النتائج
+        function closeResultWindow() {
+            playSound('click-sound');
+            document.getElementById('result-window').style.display = 'none';
+        }
+
+        // معالجة الأوامر
+        function handleCommand(command) {
+            addDataLine(`>> ${command}`, "command");
+            
+            switch(command.toLowerCase()) {
+                case 'مساعدة':
+                    showHelp();
+                    break;
+                case 'مسح':
+                    simulateNetworkScan();
+                    break;
+                case 'استغلال':
+                    simulateExploit();
+                    break;
+                case 'حقن':
+                    simulateSQLInjection();
+                    break;
+                case 'قوة-غاشمة':
+                    simulateBruteForce();
+                    break;
+                case 'حجب-خدمة':
+                    simulateDDOS();
+                    break;
+                case 'تخفي':
+                    activateStealthMode();
+                    break;
+                case 'مسح-السجلات':
+                    clearLogs();
+                    break;
+                case 'تنزيل-أدوات':
+                    showDownloads();
+                    break;
+                case 'اختراق-واي فاي':
+                    simulateWifiHack();
+                    break;
+                case 'كسر-كلمات-المرور':
+                    simulatePasswordCrack();
+                    break;
+                case 'خروج':
+                    addDataLine(">> جاري إغلاق النظام...", "command");
+                    setTimeout(() => {
+                        addDataLine("[!] تم إغلاق النظام", "error");
+                        playSound('error-sound');
+                    }, 1500);
+                    break;
+                default:
+                    addDataLine("[!] أمر غير معروف. اكتب 'مساعدة' لعرض الأوامر المتاحة", "error");
+                    playSound('error-sound');
+            }
+        }
+
+        // تفعيل عناصر التحكم
+        function setupControls() {
+            // تفعيل عناصر القائمة الجانبية
+            document.querySelectorAll('.menu-item').forEach(item => {
+                item.addEventListener('click', function() {
+                    playSound('click-sound');
+                    document.querySelectorAll('.menu-item').forEach(i => i.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    const tool = this.getAttribute('data-tool');
+                    const device = this.getAttribute('data-device');
+                    const view = this.getAttribute('data-view');
+                    
+                    if (tool) {
+                        addDataLine(`>> تم اختيار أداة: ${this.textContent.trim()}`, "command");
+                        
+                        if (tool === 'network-scan') {
+                            simulateNetworkScan();
+                        } else if (tool === 'exploit') {
+                            simulateExploit();
+                        } else if (tool === 'sql-inject') {
+                            simulateSQLInjection();
+                        } else if (tool === 'bruteforce') {
+                            simulateBruteForce();
+                        } else if (tool === 'ddos') {
+                            simulateDDOS();
+                        } else if (tool === 'password-crack') {
+                            simulatePasswordCrack();
+                        } else if (tool === 'wifi-hack') {
+                            simulateWifiHack();
+                        }
+                    } else if (view === 'graphs') {
+                        updateGraph();
+                    } else if (view === 'network-map') {
+                        createNetworkMap();
+                    } else if (view === 'downloads') {
+                        showDownloads();
+                    }
+                });
+            });
+            
+            // تفعيل عناصر التحكم الجانبية
+            document.querySelectorAll('.control-item').forEach(item => {
+                item.addEventListener('click', function() {
+                    playSound('click-sound');
+                    const group = this.parentElement.parentElement;
+                    
+                    if (group.querySelector('.control-label').textContent === 'نوع الهجوم') {
+                        group.querySelectorAll('.control-item').forEach(i => i.classList.remove('active'));
+                    }
+                    
+                    this.classList.toggle('active');
+                });
+            });
+            
+            // تفعيل السلايدر
+            const thumb = document.querySelector('.slider-thumb');
+            const track = document.querySelector('.slider-track');
+            let isDragging = false;
+            
+            thumb.addEventListener('mousedown', (e) => {
+                isDragging = true;
+                playSound('click-sound');
+                e.preventDefault();
+            });
+            
+            document.addEventListener('mousemove', (e) => {
+                if (!isDragging) return;
+                
+                const trackRect = track.getBoundingClientRect();
+                let newLeft = (e.clientX - trackRect.left) / trackRect.width;
+                newLeft = Math.max(0, Math.min(1, newLeft));
+                
+                thumb.style.left = `${newLeft * 100}%`;
+            });
+            
+            document.addEventListener('mouseup', () => {
+                isDragging = false;
+                playSound('click-sound');
+            });
+            
+            // تفعيل أزرار الأدوات
+            document.getElementById('devices-btn').addEventListener('click', () => {
+                playSound('click-sound');
+                addDataLine(">> فتح قائمة الأجهزة...", "command");
+                showResultWindow("الأجهزة", `
+                    <div class="code-line">1. جهاز 1 - 192.168.1.1 - Windows 10</div>
+                    <div class="code-line">2. جهاز 2 - 192.168.1.2 - Ubuntu 20.04</div>
+                    <div class="code-line">3. جهاز 3 - 192.168.1.3 - Android 12</div>
+                    <div class="code-line">4. جهاز 4 - 192.168.1.4 - iOS 15</div>
+                    <div class="code-line">5. جهاز 5 - 192.168.1.5 - IoT Device</div>
+                `);
+            });
+            
+            document.getElementById('analytics-btn').addEventListener('click', () => {
+                playSound('click-sound');
+                addDataLine(">> فتح لوحة التحليلات...", "command");
+                updateGraph();
+            });
+            
+            document.getElementById('search-btn').addEventListener('click', () => {
+                playSound('click-sound');
+                addDataLine(">> فتح محرك البحث...", "command");
+                showResultWindow("بحث", `
+                    <div class="code-line">أدخل استعلام البحث:</div>
+                    <input type="text" style="width:100%; margin:10px 0; padding:5px; background:rgba(0,5,15,0.7); border:1px solid var(--neon-blue); color:var(--neon-blue);">
+                    <button style="background:var(--neon-purple); border:none; padding:5px 10px; color:black; cursor:pointer;">بحث</button>
+                `);
+            });
+            
+            document.getElementById('downloads-btn').addEventListener('click', () => {
+                playSound('click-sound');
+                addDataLine(">> فتح قسم التنزيلات...", "command");
+                showDownloads();
+            });
+            
+            document.getElementById('settings-btn').addEventListener('click', () => {
+                playSound('click-sound');
+                addDataLine(">> فتح الإعدادات...", "command");
+                showResultWindow("الإعدادات", `
+                    <div class="code-line">1. إعدادات الشبكة</div>
+                    <div class="code-line">2. إعدادات الأمان</div>
+                    <div class="code-line">3. إعدادات الواجهة</div>
+                    <div class="code-line">4. إعدادات متقدمة</div>
+                `);
+            });
+            
+            document.getElementById('security-btn').addEventListener('click', () => {
+                playSound('click-sound');
+                addDataLine(">> فتح إعدادات الأمان...", "command");
+                showResultWindow("الأمان", `
+                    <div class="code-line">1. تشفير الاتصالات</div>
+                    <div class="code-line">2. إدارة المفاتيح</div>
+                    <div class="code-line">3. جدار الحماية</div>
+                    <div class="code-line">4. مراقبة التهديدات</div>
+                `);
+            });
+            
+            document.getElementById('emergency-btn').addEventListener('click', () => {
+                playSound('alert-sound');
+                addDataLine(">> تفعيل وضع الطوارئ...", "command");
+                showResultWindow("وضع الطوارئ", `
+                    <div class="code-line warning">[!] تحذير: هذا الإجراء سيقوم بما يلي:</div>
+                    <div class="code-line">1. حذف جميع السجلات</div>
+                    <div class="code-line">2. قطع جميع الاتصالات</div>
+                    <div class="code-line">3. إغلاق النظام فورًا</div>
+                    <button style="background:var(--neon-pink); border:none; padding:5px 10px; color:black; cursor:pointer; margin-top:10px;">تفعيل وضع الطوارئ</button>
+                `);
+            });
+            
+            document.getElementById('terminal-btn').addEventListener('click', () => {
+                playSound('click-sound');
+                addDataLine(">> فتح المحطة الطرفية...", "command");
+                document.getElementById('command-field').focus();
+            });
+            
+            // إغلاق نافذة النتائج
+            document.getElementById('close-result').addEventListener('click', closeResultWindow);
+            
+            // تفعيل حقل الأوامر
+            const commandField = document.getElementById('command-field');
+            commandField.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    playSound('click-sound');
+                    const command = commandField.value.trim();
+                    if (command) {
+                        handleCommand(command);
+                        commandField.value = '';
+                    }
+                }
+            });
+            
+            // تفعيل مؤشرات الحالة
+            const statusItems = document.querySelectorAll('.status-item');
+            statusItems.forEach(item => {
+                item.addEventListener('click', function() {
+                    playSound('click-sound');
+                    const status = this.querySelector('span').textContent;
+                    addDataLine(`>> فتح إعدادات ${status}...`, "command");
+                });
+            });
+        }
+
+        // محاكاة تحميل النظام
+        function simulateLoading() {
+            const loadingProgress = document.getElementById('loading-progress');
+            const loadingText = document.getElementById('loading-text');
+            const loadingScreen = document.getElementById('loading-screen');
+            
+            const steps = [
+                {progress: 10, text: "جاري تحميل الوحدات الأساسية...", delay: 500},
+                {progress: 25, text: "جاري تهيئة واجهة المستخدم...", delay: 800},
+                {progress: 40, text: "جاري تحميل أدوات القرصنة...", delay: 1000},
+                {progress: 60, text: "جاري الاتصال بالشبكة...", delay: 1200},
+                {progress: 80, text: "جاري تحميل الوحدات الأمنية...", delay: 800},
+                {progress: 95, text: "جاري التحقق من النظام...", delay: 500},
+                {progress: 100, text: "جاهز للعمل!", delay: 300}
+            ];
+            
+            let totalDelay = 0;
+            steps.forEach(step => {
+                totalDelay += step.delay;
+                setTimeout(() => {
+                    loadingProgress.style.width = `${step.progress}%`;
+                    loadingText.textContent = step.text;
+                    
+                    if (step.progress === 100) {
+                        setTimeout(() => {
+                            loadingScreen.style.opacity = '0';
+                            setTimeout(() => {
+                                loadingScreen.style.display = 'none';
+                            }, 500);
+                        }, 500);
+                    }
+                }, totalDelay);
+            });
+        }
+
+        // تهيئة النظام
+        window.onload = function() {
+            simulateLoading();
+            
+            setTimeout(() => {
+                createParticles();
+                updateSystemTime();
+                setInterval(updateSystemTime, 1000);
+                setupControls();
+                showWelcomeMessage();
+                
+                // تحديث الرسم البياني كل 5 ثواني
+                setInterval(updateGraph, 5000);
+                
+                // تغيير حالة النظام عشوائياً
+                setInterval(() => {
+                    const statuses = ['system', 'network', 'security', 'data'];
+                    statuses.forEach(status => {
+                        if (Math.random() > 0.7) {
+                            const indicator = document.querySelector(`#${status}-status .status-indicator`);
+                            const states = ['', 'warning', 'critical'];
+                            const newState = states[Math.floor(Math.random() * states.length)];
+                            
+                            indicator.className = 'status-indicator';
+                            if (newState) indicator.classList.add(newState);
+                            
+                            if (newState === 'critical') {
+                                playSound('alert-sound');
+                            }
+                        }
+                    });
+                }, 3000);
+            }, 3500);
+        };
+    </script>
+</body>
+</html>
